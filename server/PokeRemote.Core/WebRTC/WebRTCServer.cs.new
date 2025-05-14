@@ -1,0 +1,138 @@
+using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Threading;
+using System.IO;
+using Newtonsoft.Json;
+
+using PokeRemote.Core.Capture;
+using PokeRemote.Core.Input;
+
+namespace PokeRemote.Core.WebRTC
+{
+    /// <summary>
+    /// Enumeración que representa el estado de la conexión peer-to-peer
+    /// </summary>
+    public enum PeerConnectionState
+    {
+        New,
+        Connecting,
+        Connected,
+        Disconnected,
+        Failed,
+        Closed
+    }
+
+    /// <summary>
+    /// Clase simplificada WebRTCServer - implementación completa requeriría una librería WebRTC
+    /// </summary>
+    public class WebRTCServer : IDisposable
+    {
+        // Captura de pantalla
+        private ScreenCapture _screenCapture;
+        
+        // Estado
+        private bool _isConnected = false;
+        private bool _isDisposed = false;
+        private PeerConnectionState _connectionState = PeerConnectionState.New;
+
+        // Eventos
+        public event EventHandler<string>? LogMessage;
+        public event EventHandler<PeerConnectionState>? ConnectionStateChanged;
+        
+        public bool IsConnected => _isConnected;
+        
+        public WebRTCServer()
+        {
+            _screenCapture = new ScreenCapture(frameRate: 15);
+            _screenCapture.FrameCaptured += OnFrameCaptured;
+        }
+
+        public Task Initialize()
+        {
+            LogToConsole("Inicializando WebRTC...");
+            LogToConsole("WebRTC inicializado (simulado)");
+            return Task.CompletedTask;
+        }
+
+        // Simulación del procesamiento de mensajes de control
+        public void ProcessControlMessage(string type, string key)
+        {
+            try
+            {
+                LogToConsole($"Mensaje de control recibido: {type} - {key}");
+                
+                if (type == "keydown")
+                {
+                    KeyboardInput.SendKeyDown(key);
+                }
+                else if (type == "keyup")
+                {
+                    KeyboardInput.SendKeyUp(key);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogToConsole($"Error procesando mensaje: {ex.Message}");
+            }
+        }
+
+        // Procesar captura de pantalla
+        private void OnFrameCaptured(Bitmap frame)
+        {
+            try
+            {
+                if (_isConnected)
+                {
+                    // Simulación: solo logueamos que recibimos un frame
+#pragma warning disable CA1416 // Validar la compatibilidad de la plataforma
+                    LogToConsole($"Frame capturado: {frame.Width}x{frame.Height}");
+#pragma warning restore CA1416
+                }
+            }
+            catch (Exception ex)
+            {
+                LogToConsole($"Error procesando frame: {ex.Message}");
+            }
+        }
+
+        // Simular una conexión establecida
+        public void SimulateConnection()
+        {
+            _isConnected = true;
+            _connectionState = PeerConnectionState.Connected;
+            ConnectionStateChanged?.Invoke(this, _connectionState);
+            _screenCapture.Start();
+            LogToConsole("Conexión simulada establecida");
+        }
+
+        // Simular una desconexión
+        public void SimulateDisconnection()
+        {
+            _isConnected = false;
+            _connectionState = PeerConnectionState.Disconnected;
+            ConnectionStateChanged?.Invoke(this, _connectionState);
+            _screenCapture.Stop();
+            LogToConsole("Conexión simulada cerrada");
+        }
+        
+        private void LogToConsole(string message)
+        {
+            Console.WriteLine($"[WebRTC] {message}");
+            LogMessage?.Invoke(this, message);
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed) return;
+            
+            _screenCapture.Stop();
+            _screenCapture.FrameCaptured -= OnFrameCaptured;
+            
+            _isDisposed = true;
+            LogToConsole("Recursos liberados");
+        }
+    }
+}

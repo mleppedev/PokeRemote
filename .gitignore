@@ -1,0 +1,68 @@
+# Archivos y carpetas específicas de .NET
+bin/
+obj/
+Debug/
+Release/
+*.user
+*.suo
+*.exe
+*.dll
+*.pdb
+*.cache
+*.sqlite
+.vs/
+.vscode/
+.idea/
+_ReSharper*/
+*.ReSharper*
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+artifacts/
+
+# Archivos y carpetas específicas de Flutter/Dart
+**/build/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral
+**/android/local.properties
+**/android/.gradle
+**/android/gradlew
+**/android/gradlew.bat
+**/android/.settings/
+**/android/.project
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+*.iml
+.flutter-*
+
+# Logs
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Archivos de IDE y editores
+*.swp
+*.swo
+*.bak
+*~
+.\#*
+\#*\#
+
+# Archivos temporales
+[Tt]emp/
+[Tt]mp/
