@@ -34,14 +34,22 @@ artifacts/
 **/android/gradlew.bat
 **/android/.settings/
 **/android/.project
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-*.iml
-.flutter-*
+**/android/.idea/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+**/*.iml
+**/.flutter-*
+
+# Configuraciones específicas de Gradle que ahora manejamos con Docker
+**/gradle.properties
+**/*.gradle
+!**/android/app/build.gradle.kts
+!**/android/build.gradle.kts
+!**/android/settings.gradle.kts
 
 # Logs
 *.log
@@ -66,3 +74,13 @@ Desktop.ini
 # Archivos temporales
 [Tt]emp/
 [Tt]mp/
+
+# Docker
+*.tar
+*.tar.gz
+.dockerignore
+poke-remote-debug.apk
+poke-remote-release.apk
+# Mantener los archivos de configuración
+!Dockerfile
+!docker-compose.yml

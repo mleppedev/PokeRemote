@@ -2,6 +2,31 @@
 
 Este repositorio contiene un sistema cliente-servidor para jugar remotamente a juegos por turnos en PC desde dispositivos Android, utilizando una interfaz tipo GameBoy con controles táctiles y físicos. La comunicación se realiza mediante WebRTC para garantizar una experiencia de baja latencia.
 
+## Entorno de desarrollo
+
+Para el desarrollo de este proyecto, necesitarás configurar correctamente el entorno de Flutter y .NET. A continuación se describen los pasos necesarios para configurar el entorno de desarrollo.
+
+### Requisitos para el desarrollo:
+
+- **Flutter SDK**: Instala la versión 3.0 o superior desde [flutter.dev](https://flutter.dev/docs/get-started/install)
+- **Android SDK**: Instala Android Studio o el SDK de forma independiente
+- **VS Code**: Recomendado con las extensiones Flutter y Dart
+- **Git**: Para control de versiones
+- **.NET SDK**: Versión 8.0 o superior para el servidor
+
+### Preparación del entorno Flutter:
+
+1. Ejecuta `flutter doctor` para verificar que todas las dependencias están correctamente instaladas
+2. Asegúrate de que tu dispositivo Android está habilitado para depuración USB
+3. Configura las variables de entorno adecuadamente (ANDROID_HOME, JAVA_HOME)
+
+### Tareas de VS Code:
+
+Se añadirán próximamente tareas específicas para facilitar el desarrollo sin Docker, como:
+- Compilación de APK
+- Ejecución del servidor .NET
+- Tareas de depuración
+
 ## Características principales
 
 - **Streaming de pantalla en tiempo real**: Visualiza juegos de PC en dispositivos Android con baja latencia
@@ -81,7 +106,11 @@ poke/
 1. Navegar al directorio del cliente: `cd client`
 2. Obtener dependencias: `flutter pub get`
 3. Ejecutar en modo debug: `flutter run`
-4. Alternativamente, compilar APK: `flutter build apk --release`
+4. Compilar APK para distribución: `flutter build apk --debug` o `flutter build apk --release`
+
+#### Solución de problemas de flutter_webrtc
+
+Si encuentras problemas al compilar la aplicación cliente, especialmente relacionados con la biblioteca flutter_webrtc, consulta nuestra [guía de compatibilidad](docs/compatibilidad-flutter-webrtc.md) que incluye soluciones para los problemas más comunes.
 
 ### Conectar Cliente y Servidor
 1. Iniciar el servidor en un PC con Windows
