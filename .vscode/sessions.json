@@ -1,0 +1,83 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v10/terminal-keeper.json",
+  "theme": "tribe",
+  "active": "default",
+  "activateOnStartup": true,
+  "keepExistingTerminals": false,
+  "sessions": {
+    "default": [
+      {
+        "name": "Server",
+        "autoExecuteCommands": false,
+        "icon": "server",
+        "color": "terminal.ansiBlue",
+        "commands": [
+          "cd server",
+          "dotnet run --project PokeRemote.Server"
+        ]
+      },
+      [
+        {
+          "name": "React-Native Metro",
+          "icon": "browser",
+          "color": "terminal.ansiMagenta",
+          "commands": [
+            "cd client",
+            "npx react-native start"
+          ]
+        },
+        {
+          "name": "Android Deploy",
+          "icon": "device-mobile",
+          "color": "terminal.ansiGreen",
+          "commands": [
+            "cd client",
+            "npx react-native run-android"
+          ]
+        }
+      ],
+      [
+        {
+          "name": "Android Tools",
+          "icon": "tools",
+          "color": "terminal.ansiYellow",
+          "commands": [
+            "cd d:\\src\\poke",
+            "@echo Herramientas disponibles:",
+            "@echo - setup-android.bat: Configurar entorno Android",
+            "@echo - rebuild-android.bat: Reconstruir proyecto Android",
+            "@echo - verify-android.bat: Verificar SDK de Android"
+          ]
+        },
+        {
+          "name": "ADB Devices",
+          "icon": "device-desktop",
+          "color": "terminal.ansiCyan",
+          "commands": [
+            "adb devices"
+          ]
+        }
+      ]
+    ],
+    "development": [
+      {
+        "name": "Start Server",
+        "autoExecuteCommands": true,
+        "icon": "play",
+        "color": "terminal.ansiBlue",
+        "commands": [
+          "start-server.bat"
+        ]
+      },
+      {
+        "name": "Run Android",
+        "autoExecuteCommands": true,
+        "icon": "rocket",
+        "color": "terminal.ansiGreen",
+        "commands": [
+          "run-android-full.bat"
+        ]
+      }
+    ]
+  }
+}
