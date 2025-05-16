@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "PokeRemote.Server.Protos";
+
+package gamepad;
+
+service GamepadService {
+  // Unary request/response
+  rpc SendCommand (GamepadCommand) returns (CommandResponse);
+  
+  // Bidirectional streaming for continuous control
+  rpc StreamControls (stream GamepadCommand) returns (stream CommandResponse);
+}
+
+// Command request from client
+message GamepadCommand {
+  string button_id = 1; // UP, DOWN, LEFT, RIGHT, A, B, START, SELECT
+  string state = 2;     // PRESSED, RELEASED
+}
+
+// Response from server after processing command
+message CommandResponse {
+  bool success = 1;
+  string message = 2;
+}

@@ -1,0 +1,116 @@
+# Archivos generados por Visual Studio
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Directorios de compilación de .NET
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Archivos de NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Node.js y React Native
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Android/IntelliJ
+android/build/
+android/app/build/
+android/.idea
+android/.gradle
+android/local.properties
+android/*.iml
+android/.settings
+android/.project
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+.gradle
+
+# iOS
+ios/build/
+ios/Pods/
+ios/Podfile.lock
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+ios/.xcode.env.local
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Archivos de caché y temporales
+*.swp
+*.bak
+*.tmp
+*.temp
+
+# Directorios y archivos específicos del proyecto
+coverage/
+dist/
+build/
+.coverage
+.nyc_output/
+
+# Archivos de configuración locales
+*.Development.json
+!appsettings.Development.json
+
+# Archivos de assets que podrían ser generados
+client/src/assets/*
+!client/src/assets/*.png
+!client/src/assets/*.jpg
+!client/src/assets/*.svg
+!client/src/assets/*.gif
