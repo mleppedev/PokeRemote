@@ -21,97 +21,109 @@
 ```mermaid
 flowchart LR
   subgraph Cliente Android
-    A[Flutter UI GameBoy<br/>(vertical)] --> B[WebRTC MediaStream]
-    C[RawKeyboardListener<br/>o flutter_gamepad] --> D[WebRTC DataChannel]
+    A[React Native UI GameBoy<br/>(vertical)] --> B[WebRTC MediaStream]
+    C[NativeKeyboardEvent<br/>o react-native-gamepad] --> D[gRPC CommandStream]
     orientationCheck -->|landscape| C
     orientationCheck -->|portrait| A
   end
 
   subgraph Red
     B <--> E[WebRTC PeerConnection]
-    D <--> E
+    D <--> G[gRPC StreamingConnection]
   end
 
   subgraph Servidor PC (.NET Core)
     E --> F[WebRTC PeerConnection]
-    F --> G[VideoCapturer<br/>Graphics.CopyFromScreen]
-    F <-- H[InputHandler<br/>SendInput]
+    F --> H[VideoCapturer<br/>SharpDX.CaptureScreen]
+    G --> I[gRPC Service<br/>InputHandler]
+    I --> J[SendInput]
   end
 ```
 
 ## 🔧 Componentes y Flujo de Datos
 
-### Establecimiento de la conexión (WebRTC)
+### Establecimiento de la conexión (WebRTC + gRPC)
 
-- Señalización ligera (p.ej. HTTP + WebSocket o SignalR) para intercambio de offer/answer y candidates.
-- Se crea un PeerConnection con:
-  - MediaStream para vídeo (captura de pantalla).
-  - DataChannel para eventos de teclado.
+- **WebRTC para video**:
+  - Señalización mediante SignalR Core para intercambio de offer/answer y candidates.
+  - Se crea un PeerConnection dedicado exclusivamente para MediaStream de video.
+
+- **gRPC para comandos**:
+  - Conexión gRPC independiente para transmisión bidireccional de comandos.
+  - Mayor fiabilidad y menor latencia para controles de juego.
 
 ### Captura y envío de vídeo (PC)
 
-- Cada 100–200 ms Graphics.CopyFromScreen → frame en memoria.
+- Cada 60-100 ms SharpDX.CaptureScreen → frame en memoria.
 - Codificación y envío por WebRTC MediaStream (H.264/VP8 con perfil ultrafast).
 
-### Recepción y render en Flutter
+### Recepción y render en React Native
 
-- Widget RTCVideoView (desde flutter_webrtc) para mostrar la pantalla.
-- En vertical (Orientation.portrait), se dibuja dentro de un AspectRatio(160/144) + filtro "pixel art" opcional.
+- Componente RTCView (desde react-native-webrtc) para mostrar la pantalla.
+- En vertical (Orientation.portrait), se renderiza dentro de un componente AspectRatio con formato GameBoy (160/144) + filtros visuales opcionales.
 
 ### Detección de controles (cliente)
 
-- Vertical (touch): overlay táctil con GestureDetector en botones D-pad, A/B, Start/Select.
+- Vertical (touch): overlay táctil con componentes TouchableOpacity en botones D-pad, A/B, Start/Select.
 - Horizontal (físico):
-  - RawKeyboardListener o paquete flutter_gamepad.
-  - OrientationBuilder decide qué método usar.
+  - KeyboardEvent para teclas físicas o react-native-game-controller para gamepads.
+  - Detección de orientación para alternar entre modos.
 
-### Envío de eventos de teclado (WebRTC DataChannel)
+### Envío de eventos de teclado (gRPC)
 
-- Mensaje JSON { type:"keydown", key:"ArrowUp" } o { type:"keyup", key:"KeyA" }.
-- DataChannel garantiza baja latencia y priorización de paquetes.
+- Mensaje serializado con Protocol Buffers: `{ buttonId: "UP", state: "PRESSED" }`
+- Servicio gRPC bidireccional para alta fiabilidad y baja latencia
+- WebRTC DataChannel como fallback si gRPC falla
 
 ### Inyección de teclado (PC)
 
-- Recibir JSON en .NET Core.
+- Recibir mensajes gRPC en servicio .NET Core.
+- Procesamiento de alta prioridad para los comandos recibidos.
 - Llamar a Win32 API SendInput para simular KEYDOWN/KEYUP.
 
 ## 🛠 Stack Tecnológico
 
 | Capa | Tecnología | Comentarios |
 |------|------------|-------------|
-| Cliente | Flutter (Dart) | Android ≥21, UI responsiva, un solo binario. |
-| RTC Cliente | flutter_webrtc | MediaStream + DataChannel integrados. |
-| Señalización | WebSocket/SignalR (opcional) | Para intercambio SDP/ICE. |
-| Servidor | .NET Core 6+ (C#) | Multiplataforma futura (Linux/Windows). |
-| RTC Servidor | MixedReality-WebRTC for .NET | PeerConnection Media & Data channels. |
-| Captura Vídeo | System.Drawing.Graphics.CopyFromScreen | Windows nativo. |
+| Cliente | React Native (JavaScript/TypeScript) | Android ≥21, UI responsiva, desarrollo eficiente. |
+| RTC Cliente | react-native-webrtc | MediaStream para streaming de video. |
+| Protocolo de Control | gRPC/Protocol Buffers | Comunicación de comandos con alta fiabilidad. |
+| Señalización | SignalR Core | Para intercambio SDP/ICE de WebRTC. |
+| Servidor | .NET 8+ (C#) | Alto rendimiento, compatible con Windows. |
+| RTC Servidor | SIPSorcery o Microsoft.MixedReality.WebRTC | PeerConnection para streaming de video. |
+| Captura Vídeo | SharpDX.CaptureScreen | Capturas de alta velocidad en Windows. |
 | Inyección Key | Win32 API SendInput | Simulación fiable de teclado. |
-| Protocolo | WebRTC (UDP/TCP fallback) | Mejora NAT traversal y calidad de vídeo. |
+| Protocolo Streaming | WebRTC (UDP/TCP fallback) | Streaming de video optimizado para baja latencia. |
 
 ## 📈 Fases de Implementación
 
-### MVP WebRTC básico
+### Fase 1: MVP WebRTC y gRPC básico
 
-- Señalización + PeerConnection funcionando (loopback local).
-- Envío de vídeo (dummy) y DataChannel (eco).
+- Configurar servidor SignalR para la señalización WebRTC.
+- Implementar PeerConnection funcional (loopback local).
+- Configurar servicio gRPC para comandos del gamepad.
 
-### Captura real y UI GameBoy
+### Fase 2: Captura de pantalla y UI GameBoy
 
-- Integrar Graphics.CopyFromScreen.
-- Diseñar layout Flutter vertical con Stack y botones.
+- Integrar SharpDX.CaptureScreen para captura de alta frecuencia.
+- Diseñar interfaz React Native con componentes para gamepad virtual.
+- Implementar visualización WebRTC en cliente React Native.
 
-### Controles físicos y lógica
+### Fase 3: Controles físicos y lógica
 
-- Añadir RawKeyboardListener y paquete flutter_gamepad.
-- Lógica de alternancia UI/controles según orientación.
+- Añadir soporte para eventos de teclado nativo y controladores físicos.
+- Implementar lógica de alternancia UI según orientación del dispositivo.
+- Conectar gRPC para transmisión de comandos al servidor.
 
-### Pruebas y ajustes
+### Fase 4: Optimización y pruebas
 
-- Optimizar bitrate y fps en WebRTC.
-- Afinar mappings y latencia (aceptable para turnos).
+- Optimizar configuración de WebRTC (bitrate, fps, codecs).
+- Ajustar latencia y manejo de pérdida de paquetes.
+- Pruebas en diferentes redes y dispositivos Android.
 
-### Mejoras futuras
+### Fase 5: Mejoras futuras
 
-- Autenticación/seguridad (TLS, tokens).
-- Streaming de audio y ratón.
-- Soporte iOS / Linux desktop.
+- Autenticación/seguridad (TLS, tokens JWT).
+- Streaming de audio bidireccional.
+- Soporte para iOS y adaptación para otros dispositivos.
+- Implementación de modo multijugador colaborativo.
